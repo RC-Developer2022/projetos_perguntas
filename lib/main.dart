@@ -1,23 +1,61 @@
 import 'package:flutter/material.dart';
+import 'questionario.dart';
+import './resultado.dart';
 
 main() => runApp(PerguntaApp());
 
-class PerguntaAppState extends State<PerguntaApp> {
-  var perguntaSelecionada = 0;
+class _PerguntaAppState extends State<PerguntaApp> {
+  var _perguntaSelecionada = 0;
 
-  void responder() {
-    setState(() {
-      perguntaSelecionada++;
-    });
-    print('Pergunta respondida!');
+  final _perguntas = const [
+    {
+      'texto': 'Qual é a sua cor favorita ?',
+      'respostas': [
+        {'texto': 'Preto', 'nota': 10},
+        {'texto': 'Vermelho', 'nota': 5},
+        {'texto': 'Verde', 'nota': 3},
+        {'texto': 'Branco', 'nota': 1},
+      ],
+    },
+    {
+      'texto': 'Qual é o seu animal favorito ?',
+      'respostas': [
+        {'texto': 'Coelho', 'nota': 10},
+        {'texto': 'Cobra', 'nota': 5},
+        {'texto': 'Elefante', 'nota': 3},
+        {'texto': 'Leão', 'nota': 1}
+      ],
+    },
+    {
+      'texto': 'Qual é o seu instrutor favorito ?',
+      'respostas': [
+        {'texto': 'Maria', 'nota': 10},
+        {'texto': 'João', 'nota': 5},
+        {'texto': 'Leo', 'nota': 3},
+        {'texto': 'Pedro', 'nota': 1},
+      ],
+    },
+  ];
+
+  void _responder() {
+    if (temPergutnasSelecionadas) {
+      setState(() {
+        _perguntaSelecionada++;
+      });
+    }
+  }
+
+  bool get temPergutnasSelecionadas {
+    return _perguntaSelecionada < _perguntas.length;
   }
 
   @override
   Widget build(BuildContext context) {
-    final perguntas = [
-      'Qual é a sua cor favorita ?',
-      'Qual é o seu animal favorito ?',
-    ];
+    List<Map<String, Object>> respostas = temPergutnasSelecionadas
+        ? _perguntas[_perguntaSelecionada].cast()['respostas']
+            as List<Map<String, Object>>
+        : [];
+
     // ignore: prefer_const_constructors
     return MaterialApp(
       // ignore: prefer_const_constructors
@@ -25,34 +63,20 @@ class PerguntaAppState extends State<PerguntaApp> {
         appBar: AppBar(
           title: Text('Perguntas'),
         ),
-        body: Column(
-          // ignore: prefer_const_literals_to_create_immutables
-          children: <Widget>[
-            Text(perguntas[perguntaSelecionada]),
-            // ignore: prefer_const_constructors
-            ElevatedButton(
-              onPressed: responder,
-              child: Text('Resposta 1'),
-            ),
-            // ignore: prefer_const_constructors
-            ElevatedButton(
-              onPressed: responder,
-              child: Text('Resposta 2'),
-            ),
-            // ignore: prefer_const_constructors
-            ElevatedButton(
-              onPressed: responder,
-              child: const Text('Resposta 3'),
-            ),
-          ],
-        ),
+        body: temPergutnasSelecionadas
+            ? Questionario(
+                perguntas: _perguntas,
+                perguntaSelecionada: _perguntaSelecionada,
+                responder: _responder,
+              )
+            : Resultado(),
       ),
     );
   }
 }
 
 class PerguntaApp extends StatefulWidget {
-  PerguntaAppState createState() {
-    return PerguntaAppState();
+  _PerguntaAppState createState() {
+    return _PerguntaAppState();
   }
 }
